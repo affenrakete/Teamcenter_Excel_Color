@@ -20,6 +20,10 @@ Sub BedingteFormatierungHinzu()
     ' - "Elementänderungsstatus" überprüfen auf nicht freigegebene Artikel.
     ' - PosSpalte prüfen auf "Kleiner als Vorgänger"
     
+    ' Update: 24.05.2019
+    ' - "Strukturtyp" überprüfen auf einzelne Ebenen
+    ' - TYP, HBG, MBG
+    
     Dim Spaltenbeschriftung As Range: Set Spaltenbeschriftung = Application.Range("A1:Z1")
     
     Dim ArtikelnummerSpalte As String
@@ -30,6 +34,9 @@ Sub BedingteFormatierungHinzu()
     
     Dim PosSpalte As String
     PosSpalte = "-1"
+    
+    Dim StrukturtypSpalte As String
+    StrukturtypSpalte = "-1"
     
     Dim LetzteZeile As Integer
     LetzteZeile = ActiveSheet.Cells(Rows.Count, 1).End(xlUp).Row
@@ -53,9 +60,13 @@ Sub BedingteFormatierungHinzu()
             PosSpalte = Split(zelle.Address, "$")(1)
         End If
         
+        If zelle.Text = "Strukturtyp" Then
+            StrukturtypSpalte = Split(zelle.Address, "$")(1)
+        End If
+        
     Next zelle
     
-    If ArtikelnummerSpalte = "-1" Or ElementaenderungsstatusSpalte = "-1" Or PosSpalte = "-1" Then
+    If ArtikelnummerSpalte = "-1" Or ElementaenderungsstatusSpalte = "-1" Or PosSpalte = "-1" Or StrukturtypSpalte = "-1" Then
         MsgBox "Die Spalten 'Artikelnummer', Elementänderungsstatus und 'Pos.' müssen mit exportiert werden"
         Exit Sub
     End If
@@ -90,6 +101,24 @@ Sub BedingteFormatierungHinzu()
         '=LINKS($D2;3)="SPL"
         .FormatConditions.Add Type:=xlExpression, Formula1:="=links($" & ArtikelnummerSpalte & "2;3)=" & Chr(34) & "SPL" & Chr(34)
         .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).Interior.ColorIndex = 13
+        .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).StopIfTrue = False
+        
+        'HBG markieren
+        '=$G2="TYP"
+        .FormatConditions.Add Type:=xlExpression, Formula1:="=$" & StrukturtypSpalte & "2=" & Chr(34) & "TYP" & Chr(34)
+        .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).Interior.Color = RGB(0, 200, 0)
+        .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).StopIfTrue = False
+        
+        'HBG markieren
+        '=$G2="HBG"
+        .FormatConditions.Add Type:=xlExpression, Formula1:="=$" & StrukturtypSpalte & "2=" & Chr(34) & "HBG" & Chr(34)
+        .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).Interior.Color = RGB(0, 150, 0)
+        .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).StopIfTrue = False
+        
+        'MBG markieren
+        '=$G2="MBG"
+        .FormatConditions.Add Type:=xlExpression, Formula1:="=$" & StrukturtypSpalte & "2=" & Chr(34) & "MBG" & Chr(34)
+        .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).Interior.Color = RGB(0, 100, 0)
         .FormatConditions(Range("$2:$" & LetzteZeile).FormatConditions.Count).StopIfTrue = False
         
     End With
