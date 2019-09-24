@@ -159,10 +159,17 @@ Sub BedingteFormatierungHinzu()
     With Range("$" & ElementaenderungsstatusSpalte & "$2:$" & ElementaenderungsstatusSpalte & LetzteZeile)
     
         'Nicht freigegeben
-        '=UND(RECHTS(LINKS($F2;2);1)<>"F";RECHTS(LINKS($F2;3);1)<>"F";$F2<>"Veraltet")
-        .FormatConditions.Add Type:=xlExpression, Formula1:="=UND(RECHTS(LINKS($" & ElementaenderungsstatusSpalte & "2;2);1)<>" & Chr(34) & "F" & Chr(34) & ";RECHTS(LINKS($" & ElementaenderungsstatusSpalte & "2;3);1)<>" & Chr(34) & "F" & Chr(34) & ";$" & ElementaenderungsstatusSpalte & "2<>" & Chr(34) & "Veraltet" & Chr(34) & ")"
+        '=UND(RECHTS(LINKS($F2;2);1)<>"F";RECHTS(LINKS($F2;3);1)<>"F")
+        .FormatConditions.Add Type:=xlExpression, Formula1:="=UND(RECHTS(LINKS($" & ElementaenderungsstatusSpalte & "2;2);1)<>" & Chr(34) & "F" & Chr(34) & ";RECHTS(LINKS($" & ElementaenderungsstatusSpalte & "2;3);1)<>" & Chr(34) & "F" & Chr(34) & ")"
         .FormatConditions(Range("$" & ElementaenderungsstatusSpalte & "$2:$" & ElementaenderungsstatusSpalte & LetzteZeile).FormatConditions.Count).SetFirstPriority
         .FormatConditions(1).Interior.ColorIndex = 6
+        .FormatConditions(1).StopIfTrue = False
+        
+        'Dublette
+        '=$F2="Dublette"
+        .FormatConditions.Add Type:=xlExpression, Formula1:="=$" & ElementaenderungsstatusSpalte & "2=" & Chr(34) & "Dublette" & Chr(34)
+        .FormatConditions(Range("$" & ElementaenderungsstatusSpalte & "$2:$" & ElementaenderungsstatusSpalte & LetzteZeile).FormatConditions.Count).SetFirstPriority
+        .FormatConditions(1).Interior.ColorIndex = 46
         .FormatConditions(1).StopIfTrue = False
         
     End With
